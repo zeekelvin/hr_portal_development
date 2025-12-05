@@ -1,9 +1,8 @@
-// components/Sidebar.tsx
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 import { supabase } from "@/lib/supabaseClient";
@@ -25,7 +24,6 @@ function getInitials(fullName: string | null, email: string | null): string {
   return "?";
 }
 
-// HR / Admin nav
 const HR_ITEMS = [
   { href: "/", label: "Dashboard" },
   { href: "/employees", label: "Employees" },
@@ -35,10 +33,9 @@ const HR_ITEMS = [
   { href: "/scheduling", label: "Scheduling" },
   { href: "/reports", label: "Reports" },
   { href: "/applications", label: "Applications" },
-  { href: "/reconciliation", label: "Reconciliation" }, // NEW
+  { href: "/reconciliation", label: "Reconciliation" },
 ];
 
-// Employee self-service nav
 const EMPLOYEE_ITEMS = [
   { href: "/my", label: "My Profile" },
   { href: "/my/training", label: "My Training" },
@@ -49,6 +46,14 @@ const EMPLOYEE_ITEMS = [
 
 const HR_ROLES = ["hr", "admin", "chro", "scheduler", "manager"];
 
+function SidebarShell({ children }: { children: ReactNode }) {
+  return (
+    <aside className="flex w-full flex-col bg-tinash-navy text-white md:sticky md:top-0 md:h-screen md:min-h-screen md:w-60 md:shrink-0 md:overflow-y-auto">
+      {children}
+    </aside>
+  );
+}
+
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -57,7 +62,6 @@ export default function Sidebar() {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [userLoaded, setUserLoaded] = useState(false);
 
-  // Load Supabase auth user for footer info & role detection
   useEffect(() => {
     async function loadUser() {
       try {
@@ -95,16 +99,14 @@ export default function Sidebar() {
     } catch (err) {
       console.error("Sidebar: signOut error", err);
     } finally {
-      // Always send back to login even if signOut fails
       router.replace("/login");
     }
   }
 
   if (!userLoaded) {
-    // Avoid flicker between HR and employee views:
     return (
-      <aside className="flex h-screen w-60 flex-col bg-tinash-navy text-white">
-        <div className="flex items-center gap-3 px-5 py-6">
+      <SidebarShell>
+        <div className="flex items-center gap-3 px-5 py-4 md:py-6">
           <div className="relative h-9 w-9 overflow-hidden rounded-xl bg-white">
             <Image
               src="/tinash-logo.png"
@@ -118,7 +120,7 @@ export default function Sidebar() {
             <div className="text-xs text-white/70">Homecare Services</div>
           </div>
         </div>
-        <div className="flex-1 px-5 text-xs text-white/60">
+        <div className="flex-1 px-5 pb-4 text-xs text-white/60">
           Loading menu...
         </div>
         <div className="border-t border-white/10 px-4 py-4 text-xs text-white/80">
@@ -134,7 +136,7 @@ export default function Sidebar() {
             </div>
           </div>
         </div>
-      </aside>
+      </SidebarShell>
     );
   }
 
@@ -151,9 +153,8 @@ export default function Sidebar() {
   const displayName = isHR ? "Admin User" : "Tinash User";
 
   return (
-    <aside className="flex h-screen w-60 flex-col bg-tinash-navy text-white">
-      {/* TOP: Logo + brand */}
-      <div className="flex items-center gap-3 px-5 py-6">
+    <SidebarShell>
+      <div className="flex items-center gap-3 px-5 py-4 md:py-6">
         <div className="relative h-9 w-9 overflow-hidden rounded-xl bg-white">
           <Image
             src="/tinash-logo.png"
@@ -168,7 +169,6 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* NAV LINKS */}
       <nav className="mt-2 flex-1 space-y-1 px-3 text-sm">
         {navItems.map((item) => {
           const isActive =
@@ -193,7 +193,6 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* FOOTER: user avatar + label + logout */}
       <div className="border-t border-white/10 px-4 py-4 text-xs text-white/80">
         <div className="flex items-center gap-3">
           <div className="relative h-9 w-9 overflow-hidden rounded-full bg-white/20">
@@ -225,6 +224,6 @@ export default function Sidebar() {
           Log out
         </button>
       </div>
-    </aside>
+    </SidebarShell>
   );
 }
