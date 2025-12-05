@@ -1,6 +1,7 @@
 // app/reconciliation/page.tsx
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   Bar,
@@ -648,6 +649,12 @@ export default function HoursReconciliationPage() {
                   >
                     {deleting ? "Deleting…" : "Delete this run"}
                   </button>
+                  <Link
+                    href="/reconciliation/compare"
+                    className="inline-flex items-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-800 hover:bg-slate-50"
+                  >
+                    Compare runs
+                  </Link>
                 </div>
               </div>
 
